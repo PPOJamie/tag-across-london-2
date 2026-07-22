@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#f4f7fb" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="apple-mobile-web-app-title" content="Tag Across London" />
+  <title>Tag Across London</title>
+  <link rel="manifest" href="manifest.json" />
+  <link rel="apple-touch-icon" href="icon-192.png" />
+  <link rel="icon" type="image/png" href="icon-192.png" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <div>
+        <div class="eyebrow">Mobile game companion</div>
+        <h1>Tag Across London</h1>
+        <p class="subtitle">Spin, lock a route, track points, and keep the game moving.</p>
+      </div>
+      <div class="top-actions">
+        <button id="themeToggle" class="ghost">Dark mode</button>
+        <button id="resetGame" class="danger">Reset game</button>
+      </div>
+    </header>
+
+    <main class="grid">
+      <section class="card hero-card">
+        <div class="section-head">
+          <h2>Route builder</h2>
+          <span id="routeStatus" class="pill">Route not locked</span>
+        </div>
+
+        <div class="route-panels">
+          <div class="spin-box">
+            <label>Start station</label>
+            <div id="startChip" class="big-chip muted">Spin a start</div>
+            <button id="spinStart" class="primary">Spin start</button>
+            <small id="startHint">Starts are consumed once a route is locked.</small>
+          </div>
+
+          <div class="spin-box">
+            <label>Destination station</label>
+            <div id="destinationChip" class="big-chip muted">Spin a destination</div>
+            <button id="spinDestination" class="primary">Spin destination</button>
+            <small id="destinationHint">Only valid destinations for the chosen start are offered.</small>
+          </div>
+        </div>
+
+        <div class="route-actions">
+          <button id="lockRoute" class="primary">Lock route</button>
+          <button id="newRoute" class="ghost">New route</button>
+          <button id="openMaps" class="ghost" disabled>Open in Google Maps</button>
+          <button id="copyRoute" class="ghost" disabled>Copy route</button>
+        </div>
+
+        <div class="route-map" aria-label="Selected route">
+          <div class="mini-map-label">Selected route</div>
+          <div class="mini-map-line">
+            <span id="mapStart" class="map-node muted">Start</span>
+            <span class="map-arrow">→</span>
+            <span id="mapDestination" class="map-node muted">Destination</span>
+          </div>
+          <p id="mapText" class="map-text">Spin a start and destination, then lock the route to continue.</p>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="section-head">
+          <h2>Teams and scoring</h2>
+          <span class="pill">Live score</span>
+        </div>
+
+        <div class="team-grid">
+          <label class="field">
+            <span>Team A</span>
+            <input id="teamAName" type="text" />
+          </label>
+          <label class="field">
+            <span>Team B</span>
+            <input id="teamBName" type="text" />
+          </label>
+        </div>
+
+        <div class="scoreboard">
+          <div class="score-card">
+            <div id="teamALabel" class="score-title">Team A</div>
+            <div id="teamAScore" class="score-number">0</div>
+            <button id="scoreA" class="primary small">+1 point</button>
+          </div>
+          <div class="score-card">
+            <div id="teamBLabel" class="score-title">Team B</div>
+            <div id="teamBScore" class="score-number">0</div>
+            <button id="scoreB" class="primary small">+1 point</button>
+          </div>
+        </div>
+
+        <div class="role-row">
+          <div>
+            <div class="eyebrow">Current role</div>
+            <strong id="currentRole">Runners</strong>
+          </div>
+          <button id="switchRole" class="ghost">Switch role</button>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="section-head">
+          <h2>Timers</h2>
+          <span class="pill">Countdowns</span>
+        </div>
+
+        <div class="timer-list">
+          <div class="timer-row" data-timer="headStart">
+            <div>
+              <strong>Head start</strong>
+              <div class="timer-value" id="headStartValue">15:00</div>
+            </div>
+            <div class="timer-controls">
+              <button class="ghost timer-toggle">Start</button>
+              <button class="ghost timer-reset">Reset</button>
+            </div>
+          </div>
+          <div class="timer-row" data-timer="busLimit">
+            <div>
+              <strong>Bus limit</strong>
+              <div class="timer-value" id="busLimitValue">10:00</div>
+            </div>
+            <div class="timer-controls">
+              <button class="ghost timer-toggle">Start</button>
+              <button class="ghost timer-reset">Reset</button>
+            </div>
+          </div>
+          <div class="timer-row" data-timer="challenge">
+            <div>
+              <strong>Challenge limit</strong>
+              <div class="timer-value" id="challengeValue">15:00</div>
+            </div>
+            <div class="timer-controls">
+              <button class="ghost timer-toggle">Start</button>
+              <button class="ghost timer-reset">Reset</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="section-head">
+          <h2>Challenge wheel</h2>
+          <span id="challengeCount" class="pill">31 challenges</span>
+        </div>
+
+        <div class="challenge-wheel">
+          <div id="challengeChip" class="big-chip muted">Spin a challenge</div>
+          <button id="spinChallenge" class="primary">Spin challenge</button>
+          <div class="route-actions compact">
+            <button id="markChallengeDone" class="ghost" disabled>Mark complete</button>
+            <button id="rerollChallenge" class="ghost" disabled>Reroll</button>
+          </div>
+          <p id="challengeText" class="map-text">Completed challenges are removed from future spins.</p>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="section-head">
+          <h2>Station messages</h2>
+          <span class="pill">Copy ready</span>
+        </div>
+
+        <div class="message-form">
+          <label class="field">
+            <span>Message type</span>
+            <select id="messageType">
+              <option value="Entering">Entering</option>
+              <option value="Leaving">Leaving</option>
+            </select>
+          </label>
+          <label class="field">
+            <span>Station</span>
+            <input id="messageStation" type="text" placeholder="Charing Cross" />
+          </label>
+          <label class="field">
+            <span>Time</span>
+            <input id="messageTime" type="time" />
+          </label>
+        </div>
+
+        <div class="message-output">
+          <code id="messagePreview">Entering Charing Cross at 14:30</code>
+        </div>
+        <button id="copyMessage" class="primary">Copy message</button>
+      </section>
+
+      <section class="card full-width">
+        <div class="section-head">
+          <h2>Game history</h2>
+          <span class="pill">Autosaved</span>
+        </div>
+        <div id="historyList" class="history-list"></div>
+      </section>
+    </main>
+  </div>
+
+  <template id="historyTemplate">
+    <article class="history-item">
+      <div class="history-title"></div>
+      <div class="history-meta"></div>
+    </article>
+  </template>
+
+  <script src="app.js"></script>
+</body>
+</html>
