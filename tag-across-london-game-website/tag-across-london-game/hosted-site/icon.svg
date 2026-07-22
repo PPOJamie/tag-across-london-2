@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Tag Across London app icon">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#111827"/>
+      <stop offset="1" stop-color="#263449"/>
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" rx="112" fill="url(#bg)"/>
+  <path d="M64 302c60-41 104 47 164 4s105-55 164-13 86 7 120-13" fill="none" stroke="#93c5fd" stroke-linecap="round" stroke-width="38" opacity=".9"/>
+  <path d="M121 151 391 356" fill="none" stroke="#fff" stroke-linecap="round" stroke-width="26" opacity=".98"/>
+  <circle cx="132" cy="159" r="56" fill="#f59e0b" stroke="#fff" stroke-width="18"/>
+  <circle cx="381" cy="349" r="56" fill="#22c55e" stroke="#fff" stroke-width="18"/>
+  <circle cx="256" cy="256" r="35" fill="#2563eb" stroke="#fff" stroke-width="14"/>
+</svg>

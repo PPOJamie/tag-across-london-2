@@ -1,0 +1,19 @@
+{
+  "name": "Tag Across London — Game Console",
+  "short_name": "Tag London",
+  "description": "Route and challenge spinners, a station map, timers, scores and a round log for Tag Across London.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#eef2f7",
+  "theme_color": "#111827",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
