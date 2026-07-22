@@ -165,6 +165,27 @@
     .routesvg .node.dest { fill: #22c55e; }
     .routesvg .node.selected { stroke: #fff; stroke-width: 4; }
     .routesvg .titleBand { fill: rgba(8,17,31,0.85); }
+
+    .mapsGrid { display: grid; grid-template-columns: 1.05fr 0.95fr; gap: 10px; }
+    @media (max-width: 900px) { .mapsGrid { grid-template-columns: 1fr; } }
+    .gmapShell {
+      border-radius: 20px; overflow: hidden; border: 1px solid var(--line);
+      background: rgba(255,255,255,0.04); min-height: 360px;
+    }
+    .gmapCanvas { width: 100%; height: 360px; }
+    .gmapStatus { color: var(--muted); font-size: 0.84rem; line-height: 1.45; margin-top: 10px; }
+    .routeList { display: grid; gap: 10px; max-height: 360px; overflow: auto; padding-right: 2px; }
+    .routeOption {
+      border-radius: 18px; border: 1px solid var(--line); background: rgba(255,255,255,0.04);
+      padding: 12px; display: grid; gap: 10px;
+    }
+    .routeOption.active { outline: 2px solid rgba(125,211,252,0.9); background: rgba(125,211,252,0.12); }
+    .routeOption .top { display:flex; justify-content: space-between; gap: 10px; align-items: baseline; }
+    .routeOption .title { font-weight: 900; }
+    .routeOption .meta { color: var(--muted); font-size: 0.82rem; }
+    .routeOption .detail { color: var(--text); font-size: 0.88rem; line-height: 1.45; }
+    .routeOption .actions { display:flex; gap:8px; flex-wrap:wrap; }
+    .routeOption .actions .btn { padding: 10px 12px; border-radius: 14px; font-size: 0.86rem; }
   </style>
 </head>
 <body>
@@ -275,6 +296,31 @@
             <div class="value">Spin, then lock. The map highlights your current start and destination automatically.</div>
           </div>
         </div>
+      </div>
+    </section>
+
+
+    <section class="card" style="margin-bottom:12px;">
+      <div class="cardHead">
+        <h2>Transit link</h2>
+        <span class="tiny">Open the selected route in Google Maps</span>
+      </div>
+      <div class="cardBody">
+        <div class="routeInfo" style="margin-bottom:12px;">
+          <div class="routeCard">
+            <div class="label">Locked route</div>
+            <div class="value" id="googleTransitSummary">No route locked yet</div>
+          </div>
+          <div class="routeCard">
+            <div class="label">How to use</div>
+            <div class="value">Lock a route, then tap the button to open Google Maps with transit directions on your phone.</div>
+          </div>
+        </div>
+        <div class="footerBtns">
+          <button class="btn good" onclick="openGoogleTransitLink()">Open in Google Maps</button>
+          <button class="btn secondary" onclick="copyGoogleTransitLink()">Copy transit link</button>
+        </div>
+        <div class="gmapStatus" id="googleMapStatus">Lock a route first, then open Google Maps for transit directions.</div>
       </div>
     </section>
 
@@ -524,6 +570,7 @@
       state.lockedRoute = { start: state.start, dest: state.dest };
       addLog(`Locked route: ${state.start} -> ${state.dest}`);
       save(); renderAll();
+      renderTransitLinkCard();
     }
 
     function lockStart() {
@@ -749,7 +796,64 @@
       return `M ${sx} ${sy} Q ${cx} ${cy} ${dx} ${dy}`;
     }
 
+    function googleStationQuery(name) {
+      return `${name}, London, UK`;
+    }
+
+    function googleTransitUrl() {
+      if (!state.lockedRoute) return "";
+      const route = state.lockedRoute;
+      return `https://www.google.com/maps/dir/?api=1&origin=${encodeURIComponent(googleStationQuery(route.start))}&destination=${encodeURIComponent(googleStationQuery(route.dest))}&travelmode=transit`;
+    }
+
+    function setGoogleStatus(text) {
+      const el = $("googleMapStatus");
+      if (el) el.textContent = text;
+    }
+
+    function renderTransitLinkCard() {
+      const summary = $("googleTransitSummary");
+      if (summary) {
+        summary.textContent = state.lockedRoute ? `${state.lockedRoute.start} → ${state.lockedRoute.dest}` : (state.start && state.dest ? `${state.start} → ${state.dest}` : "No route locked yet");
+      }
+      const status = $("googleMapStatus");
+      if (status) {
+        status.textContent = state.lockedRoute
+          ? "Tap the button to open Google Maps transit directions for the locked route."
+          : "Lock a route first, then open Google Maps for transit directions.";
+      }
+    }
+
+    function openGoogleTransitLink() {
+      const url = googleTransitUrl();
+      if (!url) {
+        addLog("Tried to open Google Maps before a route was locked.");
+        renderTransitLinkCard();
+        return;
+      }
+      window.open(url, '_blank', 'noopener,noreferrer');
+      addLog(`Opened Google Maps transit directions for ${state.lockedRoute.start} → ${state.lockedRoute.dest}.`);
+    }
+
+    async function copyGoogleTransitLink() {
+      const url = googleTransitUrl();
+      if (!url) {
+        addLog("Tried to copy a transit link before a route was locked.");
+        renderTransitLinkCard();
+        return;
+      }
+      try {
+        await navigator.clipboard.writeText(url);
+        setGoogleStatus("Transit link copied to clipboard.");
+        addLog("Copied Google Maps transit link.");
+      } catch (err) {
+        console.error(err);
+        setGoogleStatus("Could not copy automatically. Use the Open button instead.");
+      }
+    }
+
     function pickStation(name) {
+
       if (STARTS.includes(name)) {
         state.start = name; state.dest = null; addLog(`Picked start manually: ${name}`);
       } else if (DESTINATIONS.includes(name)) {
@@ -776,6 +880,7 @@
       renderTimer("challenge", 15, "challengeTimer", "challengeBar");
       buildMessage();
       renderMap();
+      renderTransitLinkCard();
       renderLog();
       save();
     }
